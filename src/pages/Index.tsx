@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
@@ -20,6 +21,7 @@ interface CartItem extends Product {
 }
 
 const Index = () => {
+  const navigate = useNavigate();
   const [selectedCategory, setSelectedCategory] = useState<string>('Все');
   const [cart, setCart] = useState<CartItem[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
@@ -151,7 +153,7 @@ const Index = () => {
                         <span>Итого:</span>
                         <span>{cartTotal} ₽</span>
                       </div>
-                      <Button className="w-full" size="lg">
+                      <Button className="w-full" size="lg" onClick={() => navigate('/checkout', { state: { cart, total: cartTotal } })}>
                         Перейти к оплате
                       </Button>
                     </div>
@@ -171,7 +173,7 @@ const Index = () => {
           <p className="text-xl text-gray-600">
             Маркетплейс для продажи всего, что тебе больше не нужно
           </p>
-          <Button size="lg" className="text-lg px-8">
+          <Button size="lg" className="text-lg px-8" onClick={() => navigate('/add-product')}>
             Начать продавать
           </Button>
         </div>
@@ -220,7 +222,7 @@ const Index = () => {
           {filteredProducts.map(product => (
             <Card key={product.id} className="group cursor-pointer border-gray-200 hover:shadow-lg transition-all duration-300">
               <CardContent className="p-0">
-                <div className="relative overflow-hidden rounded-t-lg">
+                <div className="relative overflow-hidden rounded-t-lg" onClick={() => navigate(`/product/${product.id}`)}>
                   <img
                     src={product.image}
                     alt={product.title}
