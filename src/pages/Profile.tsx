@@ -42,7 +42,7 @@ const Profile = () => {
   const [newReview, setNewReview] = useState({ rating: 5, comment: '' });
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [ratingFilter, setRatingFilter] = useState<number | null>(null);
-  
+
   const userInfo = {
     name: 'Александр Иванов',
     email: 'alex.ivanov@example.com',
@@ -146,6 +146,10 @@ const Profile = () => {
       status: 'Активен',
     },
   ];
+
+  const getRatingCount = (rating: number) => {
+    return reviews.filter(review => review.rating === rating).length;
+  };
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -329,20 +333,25 @@ const Profile = () => {
                         size="sm"
                         onClick={() => setRatingFilter(null)}
                       >
-                        Все
+                        Все ({reviews.length})
                       </Button>
-                      {[5, 4, 3, 2, 1].map((rating) => (
-                        <Button
-                          key={rating}
-                          variant={ratingFilter === rating ? 'default' : 'outline'}
-                          size="sm"
-                          onClick={() => setRatingFilter(rating)}
-                          className="gap-1"
-                        >
-                          {rating}
-                          <Icon name="Star" size={14} className="fill-current" />
-                        </Button>
-                      ))}
+                      {[5, 4, 3, 2, 1].map((rating) => {
+                        const count = getRatingCount(rating);
+                        return (
+                          <Button
+                            key={rating}
+                            variant={ratingFilter === rating ? 'default' : 'outline'}
+                            size="sm"
+                            onClick={() => setRatingFilter(rating)}
+                            className="gap-1"
+                            disabled={count === 0}
+                          >
+                            {rating}
+                            <Icon name="Star" size={14} className="fill-current" />
+                            ({count})
+                          </Button>
+                        );
+                      })}
                     </div>
                   </div>
                   <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
