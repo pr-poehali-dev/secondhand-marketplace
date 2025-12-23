@@ -1,11 +1,14 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import Icon from '@/components/ui/icon';
+import ReviewCard from '@/components/ReviewCard';
+import { Textarea } from '@/components/ui/textarea';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 
 interface Order {
   id: number;
@@ -25,8 +28,19 @@ interface Sale {
   status: 'Продан' | 'Активен';
 }
 
+interface Review {
+  id: number;
+  author: string;
+  rating: number;
+  comment: string;
+  date: string;
+  product?: string;
+}
+
 const Profile = () => {
   const navigate = useNavigate();
+  const [newReview, setNewReview] = useState({ rating: 5, comment: '' });
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
   
   const userInfo = {
     name: 'Александр Иванов',
@@ -66,6 +80,39 @@ const Profile = () => {
       ],
       total: 5000,
       status: 'Доставлен',
+    },
+  ];
+
+  const reviews: Review[] = [
+    {
+      id: 1,
+      author: 'Мария Кузнецова',
+      rating: 5,
+      comment: 'Отличный продавец! Товар доставлен быстро, всё как на фото. Очень довольна покупкой, рекомендую!',
+      date: '18 декабря 2024',
+      product: 'Скандинавский стул',
+    },
+    {
+      id: 2,
+      author: 'Дмитрий Петров',
+      rating: 5,
+      comment: 'Всё отлично, продавец приятный в общении. Вещь в идеальном состоянии.',
+      date: '10 декабря 2024',
+      product: 'Свитшот оверсайз',
+    },
+    {
+      id: 3,
+      author: 'Елена Соколова',
+      rating: 4,
+      comment: 'Хороший продавец, но доставка заняла немного больше времени, чем ожидалось. В остальном всё хорошо.',
+      date: '3 декабря 2024',
+    },
+    {
+      id: 4,
+      author: 'Андрей Новиков',
+      rating: 5,
+      comment: 'Супер! Быстрая сделка, качественный товар. Буду покупать ещё.',
+      date: '28 ноября 2024',
     },
   ];
 
@@ -183,9 +230,10 @@ const Profile = () => {
         </Card>
 
         <Tabs defaultValue="purchases" className="w-full">
-          <TabsList className="grid w-full grid-cols-2 mb-6">
+          <TabsList className="grid w-full grid-cols-3 mb-6">
             <TabsTrigger value="purchases">Мои покупки</TabsTrigger>
             <TabsTrigger value="sales">Мои продажи</TabsTrigger>
+            <TabsTrigger value="reviews">Отзывы</TabsTrigger>
           </TabsList>
 
           <TabsContent value="purchases" className="space-y-4">
@@ -262,6 +310,79 @@ const Profile = () => {
                 </CardContent>
               </Card>
             ))}
+          </TabsContent>
+
+          <TabsContent value="reviews" className="space-y-6">
+            <Card>
+              <CardHeader>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <CardTitle>Отзывы о продавце</CardTitle>
+                    <CardDescription>Что говорят покупатели</CardDescription>
+                  </div>
+                  <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+                    <DialogTrigger asChild>
+                      <Button>
+                        <Icon name="Plus" size={20} className="mr-2" />
+                        Оставить отзыв
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent>
+                      <DialogHeader>
+                        <DialogTitle>Оставить отзыв</DialogTitle>
+                        <DialogDescription>
+                          Поделитесь своим опытом покупки у этого продавца
+                        </DialogDescription>
+                      </DialogHeader>
+                      <div className="space-y-4 py-4">
+                        <div className="space-y-2">
+                          <label className="text-sm font-medium">Оценка</label>
+                          <div className="flex gap-2">
+                            {Array.from({ length: 5 }).map((_, i) => (
+                              <button
+                                key={i}
+                                type="button"
+                                onClick={() => setNewReview({ ...newReview, rating: i + 1 })}
+                                className="transition-transform hover:scale-110"
+                              >
+                                <Icon
+                                  name="Star"
+                                  size={32}
+                                  className={i < newReview.rating ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300'}
+                                />
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+                        <div className="space-y-2">
+                          <label className="text-sm font-medium">Ваш отзыв</label>
+                          <Textarea
+                            placeholder="Расскажите о своём опыте покупки..."
+                            value={newReview.comment}
+                            onChange={(e) => setNewReview({ ...newReview, comment: e.target.value })}
+                            rows={4}
+                          />
+                        </div>
+                        <Button
+                          className="w-full"
+                          onClick={() => {
+                            setIsDialogOpen(false);
+                            setNewReview({ rating: 5, comment: '' });
+                          }}
+                        >
+                          Отправить отзыв
+                        </Button>
+                      </div>
+                    </DialogContent>
+                  </Dialog>
+                </div>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                {reviews.map(review => (
+                  <ReviewCard key={review.id} {...review} />
+                ))}
+              </CardContent>
+            </Card>
           </TabsContent>
         </Tabs>
       </div>
