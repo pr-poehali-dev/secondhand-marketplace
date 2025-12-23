@@ -41,6 +41,7 @@ const Profile = () => {
   const navigate = useNavigate();
   const [newReview, setNewReview] = useState({ rating: 5, comment: '' });
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [ratingFilter, setRatingFilter] = useState<number | null>(null);
   
   const userInfo = {
     name: 'Александр Иванов',
@@ -315,10 +316,34 @@ const Profile = () => {
           <TabsContent value="reviews" className="space-y-6">
             <Card>
               <CardHeader>
-                <div className="flex items-center justify-between">
+                <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                   <div>
                     <CardTitle>Отзывы о продавце</CardTitle>
                     <CardDescription>Что говорят покупатели</CardDescription>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-sm text-gray-600">Фильтр:</span>
+                    <div className="flex gap-1">
+                      <Button
+                        variant={ratingFilter === null ? 'default' : 'outline'}
+                        size="sm"
+                        onClick={() => setRatingFilter(null)}
+                      >
+                        Все
+                      </Button>
+                      {[5, 4, 3, 2, 1].map((rating) => (
+                        <Button
+                          key={rating}
+                          variant={ratingFilter === rating ? 'default' : 'outline'}
+                          size="sm"
+                          onClick={() => setRatingFilter(rating)}
+                          className="gap-1"
+                        >
+                          {rating}
+                          <Icon name="Star" size={14} className="fill-current" />
+                        </Button>
+                      ))}
+                    </div>
                   </div>
                   <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
                     <DialogTrigger asChild>
@@ -378,9 +403,17 @@ const Profile = () => {
                 </div>
               </CardHeader>
               <CardContent className="space-y-4">
-                {reviews.map(review => (
-                  <ReviewCard key={review.id} {...review} />
-                ))}
+                {reviews
+                  .filter(review => ratingFilter === null || review.rating === ratingFilter)
+                  .map(review => (
+                    <ReviewCard key={review.id} {...review} />
+                  ))}
+                {reviews.filter(review => ratingFilter === null || review.rating === ratingFilter).length === 0 && (
+                  <div className="text-center py-8 text-gray-500">
+                    <Icon name="Search" size={48} className="mx-auto mb-2 opacity-50" />
+                    <p>Нет отзывов с выбранным рейтингом</p>
+                  </div>
+                )}
               </CardContent>
             </Card>
           </TabsContent>
