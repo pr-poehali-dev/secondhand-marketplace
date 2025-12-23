@@ -35,6 +35,10 @@ interface Review {
   comment: string;
   date: string;
   product?: string;
+  reply?: {
+    text: string;
+    date: string;
+  };
 }
 
 const Profile = () => {
@@ -92,6 +96,10 @@ const Profile = () => {
       comment: 'Отличный продавец! Товар доставлен быстро, всё как на фото. Очень довольна покупкой, рекомендую!',
       date: '18 декабря 2024',
       product: 'Скандинавский стул',
+      reply: {
+        text: 'Спасибо за отзыв! Рад, что вам понравилось. Приходите ещё!',
+        date: '19 декабря 2024',
+      },
     },
     {
       id: 2,
@@ -107,6 +115,10 @@ const Profile = () => {
       rating: 4,
       comment: 'Хороший продавец, но доставка заняла немного больше времени, чем ожидалось. В остальном всё хорошо.',
       date: '3 декабря 2024',
+      reply: {
+        text: 'Приношу извинения за задержку! Постараюсь улучшить сроки доставки.',
+        date: '4 декабря 2024',
+      },
     },
     {
       id: 4,
@@ -226,10 +238,16 @@ const Profile = () => {
                 </div>
               </div>
 
-              <Button variant="outline">
-                <Icon name="Settings" size={20} className="mr-2" />
-                Редактировать профиль
-              </Button>
+              <div className="flex flex-col gap-2">
+                <Button variant="outline">
+                  <Icon name="Settings" size={20} className="mr-2" />
+                  Редактировать профиль
+                </Button>
+                <Button>
+                  <Icon name="MessageCircle" size={20} className="mr-2" />
+                  Написать продавцу
+                </Button>
+              </div>
             </div>
           </CardContent>
         </Card>
@@ -451,7 +469,7 @@ const Profile = () => {
                 {reviews
                   .filter(review => ratingFilter === null || review.rating === ratingFilter)
                   .map(review => (
-                    <ReviewCard key={review.id} {...review} />
+                    <ReviewCard key={review.id} {...review} isOwnProfile={true} />
                   ))}
                 {reviews.filter(review => ratingFilter === null || review.rating === ratingFilter).length === 0 && (
                   <div className="text-center py-8 text-gray-500">
