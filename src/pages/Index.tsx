@@ -88,7 +88,12 @@ const Index = () => {
             </nav>
           </div>
           
-          <Sheet>
+          <div className="flex items-center gap-4">
+            <Button variant="ghost" size="icon" onClick={() => navigate('/profile')}>
+              <Icon name="User" size={20} />
+            </Button>
+          </div>
+            <Sheet>
             <SheetTrigger asChild>
               <Button variant="outline" size="icon" className="relative">
                 <Icon name="ShoppingCart" size={20} />
