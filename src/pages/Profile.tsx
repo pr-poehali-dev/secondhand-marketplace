@@ -320,41 +320,13 @@ const Profile = () => {
           <TabsContent value="reviews" className="space-y-6">
             <Card>
               <CardHeader>
-                <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                  <div>
-                    <CardTitle>Отзывы о продавце</CardTitle>
-                    <CardDescription>Что говорят покупатели</CardDescription>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <span className="text-sm text-gray-600">Фильтр:</span>
-                    <div className="flex gap-1">
-                      <Button
-                        variant={ratingFilter === null ? 'default' : 'outline'}
-                        size="sm"
-                        onClick={() => setRatingFilter(null)}
-                      >
-                        Все ({reviews.length})
-                      </Button>
-                      {[5, 4, 3, 2, 1].map((rating) => {
-                        const count = getRatingCount(rating);
-                        return (
-                          <Button
-                            key={rating}
-                            variant={ratingFilter === rating ? 'default' : 'outline'}
-                            size="sm"
-                            onClick={() => setRatingFilter(rating)}
-                            className="gap-1"
-                            disabled={count === 0}
-                          >
-                            {rating}
-                            <Icon name="Star" size={14} className="fill-current" />
-                            ({count})
-                          </Button>
-                        );
-                      })}
+                <div className="space-y-4">
+                  <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                    <div>
+                      <CardTitle>Отзывы о продавце</CardTitle>
+                      <CardDescription>Что говорят покупатели</CardDescription>
                     </div>
-                  </div>
-                  <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+                    <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
                     <DialogTrigger asChild>
                       <Button>
                         <Icon name="Plus" size={20} className="mr-2" />
@@ -409,6 +381,70 @@ const Profile = () => {
                       </div>
                     </DialogContent>
                   </Dialog>
+                  </div>
+                  
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-between text-sm">
+                      <span className="font-medium">Распределение оценок</span>
+                      <div className="flex items-center gap-1">
+                        <Icon name="Star" size={20} className="text-yellow-500 fill-yellow-500" />
+                        <span className="font-bold text-lg">{userInfo.rating}</span>
+                        <span className="text-gray-600">из 5</span>
+                      </div>
+                    </div>
+                    {[5, 4, 3, 2, 1].map((rating) => {
+                      const count = getRatingCount(rating);
+                      const percentage = reviews.length > 0 ? (count / reviews.length) * 100 : 0;
+                      return (
+                        <div key={rating} className="flex items-center gap-3">
+                          <button
+                            onClick={() => setRatingFilter(rating)}
+                            className="flex items-center gap-1 text-sm font-medium w-12 hover:text-primary transition-colors"
+                          >
+                            {rating}
+                            <Icon name="Star" size={14} className="fill-yellow-400 text-yellow-400" />
+                          </button>
+                          <div className="flex-1 h-3 bg-gray-200 rounded-full overflow-hidden">
+                            <div
+                              className="h-full bg-yellow-400 transition-all duration-300"
+                              style={{ width: `${percentage}%` }}
+                            />
+                          </div>
+                          <span className="text-sm text-gray-600 w-12 text-right">{count}</span>
+                        </div>
+                      );
+                    })}
+                  </div>
+                  
+                  <div className="flex items-center gap-2 pt-2">
+                    <span className="text-sm text-gray-600">Фильтр:</span>
+                    <div className="flex gap-1 flex-wrap">
+                      <Button
+                        variant={ratingFilter === null ? 'default' : 'outline'}
+                        size="sm"
+                        onClick={() => setRatingFilter(null)}
+                      >
+                        Все ({reviews.length})
+                      </Button>
+                      {[5, 4, 3, 2, 1].map((rating) => {
+                        const count = getRatingCount(rating);
+                        return (
+                          <Button
+                            key={rating}
+                            variant={ratingFilter === rating ? 'default' : 'outline'}
+                            size="sm"
+                            onClick={() => setRatingFilter(rating)}
+                            className="gap-1"
+                            disabled={count === 0}
+                          >
+                            {rating}
+                            <Icon name="Star" size={14} className="fill-current" />
+                            ({count})
+                          </Button>
+                        );
+                      })}
+                    </div>
+                  </div>
                 </div>
               </CardHeader>
               <CardContent className="space-y-4">
